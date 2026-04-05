@@ -170,6 +170,24 @@ export function AdminPanel() {
     }
   };
 
+  const handleFixImages = async () => {
+    try {
+      toast.loading('جارٍ إصلاح الصور المفقودة...', { id: 'fix-images' });
+      const response = await fetch('/api/articles/fix-images', { method: 'POST' });
+      const data = await response.json();
+      toast.dismiss('fix-images');
+      if (data.success) {
+        toast.success(data.message);
+        fetchArticles();
+      } else {
+        toast.error(data.error || 'فشل في إصلاح الصور');
+      }
+    } catch {
+      toast.dismiss('fix-images');
+      toast.error('حدث خطأ أثناء إصلاح الصور');
+    }
+  };
+
   return (
     <div className="page-transition mx-auto max-w-5xl px-4 py-8 sm:px-6">
       {/* Header */}
@@ -182,6 +200,14 @@ export function AdminPanel() {
         </div>
         <div className="flex gap-2 flex-wrap">
           <CreateArticleDialog onCreated={fetchArticles} />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleFixImages}
+            className="border-amber-300 text-amber-700 hover:bg-amber-50"
+          >
+            🖼️ إصلاح الصور المفقودة
+          </Button>
           <Button
             variant="outline"
             size="sm"
