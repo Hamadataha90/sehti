@@ -32,7 +32,7 @@ interface AppState {
   navigate: (view: ViewType) => void;
   openArticle: (article: ArticleData) => void;
   setAdminToken: (token: string | null) => void;
-  goHome: () => void;
+  restoreAdminToken: () => void;
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: string) => void;
 }
@@ -41,7 +41,7 @@ export const useAppStore = create<AppState>((set) => ({
   currentView: 'home',
   selectedArticleId: null,
   selectedArticle: null,
-  adminToken: typeof window !== 'undefined' ? sessionStorage.getItem('adminToken') : null,
+  adminToken: null,
   searchQuery: '',
   selectedCategory: 'all',
 
@@ -101,12 +101,26 @@ export const useAppStore = create<AppState>((set) => ({
   setAdminToken: (token) => {
     if (typeof window !== 'undefined') {
       if (token) {
-        sessionStorage.setItem('adminToken', token);
+        localStorage.setItem('adminToken', token);
+        localStorage.setItem('adminTokenExpiry', String(Date.now() + 7 * 24 * 60 * 60 * 1000));
       } else {
-        sessionStorage.removeItem('adminToken');
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminTokenExpiry');
       }
     }
     set({ adminToken: token });
+  },
+
+  restoreAdminToken: () => {
+    if (typeof window === 'undefined') return;
+    const token = localStorage.getItem('adminToken');
+    const expiry = localStorage.getItem('adminTokenExpiry');
+    if (token && expiry && Date.now() < Number(expiry)) {
+      set({ adminToken: token });
+    } else {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminTokenExpiry');
+    }
   },
 
   goHome: () => {

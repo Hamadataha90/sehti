@@ -29,11 +29,11 @@ export default function MainPage() {
     fetchAll();
   }, []);
 
-  // Restore admin token from sessionStorage
+  // Restore admin token from localStorage
   useEffect(() => {
-    const token = sessionStorage.getItem('adminToken');
-    if (token && currentView === 'admin-login') {
-      useAppStore.getState().setAdminToken(token);
+    useAppStore.getState().restoreAdminToken();
+    const { adminToken: restored, currentView: view } = useAppStore.getState();
+    if (restored && view === 'admin-login') {
       navigate('admin');
     }
   }, []);
