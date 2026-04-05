@@ -52,14 +52,32 @@ export const useAppStore = create<AppState>((set) => ({
   searchQuery: '',
   selectedCategory: 'all',
 
-  navigate: (view) => set({ currentView: view, searchQuery: '' }),
+  navigate: (view) => {
+    if (typeof window !== 'undefined') {
+      const routes: Record<string, string> = {
+        home: '/',
+        calculators: '/#calculators',
+        about: '/about',
+        privacy: '/privacy',
+        'admin-login': '/admin',
+        admin: '/admin',
+      };
+      const url = routes[view] ?? '/';
+      window.history.pushState({}, '', url);
+    }
+    set({ currentView: view, searchQuery: '' });
+  },
 
-  openArticle: (article) =>
+  openArticle: (article) => {
+    if (typeof window !== 'undefined') {
+      window.history.pushState({}, '', `/article/${article.slug}`);
+    }
     set({
       currentView: 'article',
       selectedArticleId: article.id,
       selectedArticle: article,
-    }),
+    });
+  },
 
   setAdminToken: (token) => {
     if (typeof window !== 'undefined') {
@@ -72,13 +90,17 @@ export const useAppStore = create<AppState>((set) => ({
     set({ adminToken: token });
   },
 
-  goHome: () =>
+  goHome: () => {
+    if (typeof window !== 'undefined') {
+      window.history.pushState({}, '', '/');
+    }
     set({
       currentView: 'home',
       selectedArticleId: null,
       selectedArticle: null,
       searchQuery: '',
-    }),
+    });
+  },
 
   setSearchQuery: (query) => set({ searchQuery: query }),
   setSelectedCategory: (category) => set({ selectedCategory: category }),
