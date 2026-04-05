@@ -11,7 +11,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
-    "seed": "DATABASE_URL=$(grep DATABASE_URL .env | cut -d= -f2-) npx tsx seed-db.ts",
+    "seed": "DATABASE_URL=$(grep DATABASE_URL .env | cut -d= -f2-) npx tsx seed-db.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
