@@ -133,3 +133,32 @@ Stage Summary:
 - Smart image assignment based on Arabic article title keywords
 - Admin can fix all missing images with one button click after deploying to Vercel
 - 0 lint errors, all changes pushed to origin/main
+---
+Task ID: 5
+Agent: Main Agent
+Task: Fix broken navigation - URL changes but page doesn't navigate
+
+Work Log:
+- Diagnosed root cause: `window.history.pushState` only changes URL bar but does NOT trigger
+  full page navigation. When on /articles (real Next.js page) and clicking home/calculators/about,
+  the URL changed but the page stayed because pushState doesn't trigger Next.js routing.
+- Rewrote `useAppStore.ts` navigation functions:
+  - `navigate()`: If already on `/`, uses pushState for smooth SPA transitions.
+    If on any other page, stores target view in sessionStorage and uses `window.location.href = '/'`
+  - `goHome()`: Same logic - pushState on `/`, full navigation from other pages
+  - `openArticle()`: Always uses full navigation since /article/[slug] is a real Next.js page
+  - Removed broken `popstate` listener (not needed with proper navigation)
+  - Removed `syncUrlToState` method (unnecessary complexity)
+- Updated `page.tsx`: Reads `spa_target_view` from sessionStorage on mount to resume
+  SPA navigation after cross-page redirect
+- Rewrote `Header.tsx`: Clearly separated `<Link>` (for real pages like /articles, /privacy)
+  from `<button onClick>` (for SPA views like home, calculators, about)
+- Mobile menu: Privacy link now uses `<Link href="/privacy">` instead of Zustand navigate
+- All lint checks pass with 0 errors
+
+Stage Summary:
+- Navigation now works correctly across ALL pages (SPA views + real Next.js pages)
+- Going from /articles → home works by full page navigation with sessionStorage resume
+- SPA internal navigation (home ↔ calculators ↔ about) remains smooth with pushState
+- Article opening uses full navigation for proper Next.js routing
+- 0 lint errors, pushed to origin/main
