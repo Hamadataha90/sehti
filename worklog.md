@@ -110,3 +110,26 @@ Stage Summary:
 - Browser back/forward: Added `popstate` listener that fetches articles and syncs state
 - Monetag: Centralized in `/src/lib/monetag.ts`, used by both ArticleComponents and CalculatorsPage
 - Note: Monetag ads require `NEXT_PUBLIC_MONETAG_SRC` and `NEXT_PUBLIC_MONETAG_ZONE` env vars to be configured in .env and on Vercel
+---
+Task ID: 4
+Agent: Main Agent
+Task: Fix articles missing cover images (20 extra articles in DB without images)
+
+Work Log:
+- Identified that 16 articles from seed file have images, but 20 extra articles in Neon DB were added without coverImage
+- Generated 20 new AI health images (article-17.webp through article-36.webp) using z-ai image generation CLI
+  Topics covered: vitamins, heart health, yoga/meditation, diabetes, skin care, detox, mental health,
+  stress management, healthy breakfast, superfoods, immune system, exercise & aging, sleep, hydration,
+  weight maintenance, healthy snacks, intermittent fasting, nutrition labels, fitness motivation, wellness
+- Created `/api/articles/fix-images` API endpoint with:
+  - GET: Returns stats on articles with/without images
+  - POST: Finds articles with empty coverImage and assigns relevant images using keyword matching
+  - Intelligent keyword-to-image mapping system (Arabic keywords matched to relevant images)
+- Added "Fix Missing Images" (🖼️ إصلاح الصور المفقودة) button to AdminPanel
+- All changes committed and pushed to GitHub
+
+Stage Summary:
+- 36 total images now available in public/images/ (6 original jpg + 30 webp)
+- Smart image assignment based on Arabic article title keywords
+- Admin can fix all missing images with one button click after deploying to Vercel
+- 0 lint errors, all changes pushed to origin/main
