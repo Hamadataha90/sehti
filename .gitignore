@@ -1,4 +1,4 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# See https://help.github.com/articles/ignoring-files/ for more about gitignore.
 
 # dependencies
 node_modules
@@ -37,7 +37,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -54,9 +53,8 @@ server.log
 # Skills directory
 /skills/
 
-# Database files
-/db/*.db
-/db/*.db-journal
+# Database files - SQLite is NOT used
+/db/
 /prisma/*.db
 /prisma/*.db-journal
 
@@ -72,8 +70,5 @@ download/
 *.zip
 /public/dist/
 
-# Seed scripts (keep in project but don't track DB)
-seed-db.ts
-
 # Worklog
-worklog.mdprisma/db/
+worklog.md
