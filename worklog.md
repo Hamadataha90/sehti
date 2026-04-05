@@ -59,4 +59,27 @@ Stage Summary:
 - /article/[slug] route now works with proper slugs matching database
 - /articles listing page works correctly
 - ESLint passes with 0 errors
+---
+## Task ID: 1 - seo-specialist
+### Work Task
+Implement comprehensive SEO overhaul for the صِحتي health platform including dynamic sitemap, structured data, canonical URLs, security headers, and robots.txt optimization.
+
+### Work Summary
+All 7 SEO tasks completed successfully with 0 lint errors:
+
+1. **Created `/src/app/sitemap.ts`** — Dynamic sitemap generation using Next.js MetadataRoute. Fetches all articles from the database and generates sitemap entries with proper priorities, change frequencies, and lastModified dates. Includes static pages (home, /articles, /privacy) plus all dynamic article URLs.
+
+2. **Updated `/public/robots.txt`** — Simplified from multiple bot-specific rules to a single wildcard rule allowing all crawlers, plus added explicit sitemap reference pointing to `https://calc-hub.site/sitemap.xml`.
+
+3. **Updated `/src/app/layout.tsx`** — Added `metadataBase` URL for resolving relative OG URLs. Added `alternates.canonical` pointing to `/`. Added default OG image (`/og-image.png`, 1200×630). Added JSON-LD structured data with `@graph` containing both `WebSite` schema (with SearchAction potentialAction) and `Organization` schema (with logo), placed before `<AppShell>` inside `<body>`.
+
+4. **Fixed Article JSON-LD in `/src/app/article/[slug]/ArticleDetailView.tsx`** — Replaced relative URL in `mainEntityOfPage` with absolute `articleUrl` variable. Added full `author` object with Organization type and origin URL. Added `publisher` with nested `logo` ImageObject. Used `window.location.origin` for runtime absolute URLs.
+
+5. **Added canonical URL to `/src/app/article/[slug]/page.tsx`** — Added `alternates.canonical: /article/${article.slug}` in `generateMetadata` function.
+
+6. **Added canonical URL to `/src/app/articles/page.tsx`** — Added `alternates.canonical: '/articles'` to the static metadata export.
+
+7. **Updated `/home/z/my-project/next.config.ts`** — Added `async headers()` function with security headers for all routes (X-Frame-Options: DENY, X-Content-Type-Options: nosniff, Referrer-Policy: strict-origin-when-cross-origin, Permissions-Policy restricting camera/microphone/geolocation) and long-term cache headers (1 year immutable) for static image assets.
+
+All changes passed ESLint with 0 errors. No existing functionality was broken.
 

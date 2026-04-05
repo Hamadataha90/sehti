@@ -5,6 +5,9 @@ import { AllArticlesList } from './AllArticlesList';
 export const metadata: Metadata = {
   title: 'جميع المقالات الصحية | صِحتي',
   description: 'مقالات عربية متخصصة في التغذية واللياقة البدنية والصحة العامة. نصائح غذائية، تمارين رياضية، وأدوات صحية مجانية.',
+  alternates: {
+    canonical: '/articles',
+  },
   openGraph: {
     title: 'جميع المقالات الصحية | صِحتي',
     description: 'مقالات عربية متخصصة في التغذية واللياقة البدنية والصحة العامة.',

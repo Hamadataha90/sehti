@@ -21,6 +21,9 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   return {
     title: `${article.title} | صِحتي`,
     description: article.excerpt || 'مقال صحي متخصص على منصة صِحتي',
+    alternates: {
+      canonical: `/article/${article.slug}`,
+    },
     openGraph: {
       title: article.title,
       description: article.excerpt || 'مقال صحي متخصص على منصة صِحتي',

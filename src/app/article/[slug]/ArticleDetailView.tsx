@@ -175,9 +175,23 @@ export function ArticleDetailView({
             image: article.coverImage || undefined,
             datePublished: article.createdAt,
             dateModified: article.createdAt,
-            author: { '@type': 'Organization', name: 'صِحتي' },
-            publisher: { '@type': 'Organization', name: 'صِحتي' },
-            mainEntityOfPage: { '@type': 'WebPage', '@id': `/article/${article.slug}` },
+            author: {
+              '@type': 'Organization',
+              name: 'صِحتي',
+              url: typeof window !== 'undefined' ? window.location.origin : '',
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'صِحتي',
+              logo: {
+                '@type': 'ImageObject',
+                url: `${typeof window !== 'undefined' ? window.location.origin : ''}/logo.png`,
+              },
+            },
+            mainEntityOfPage: {
+              '@type': 'WebPage',
+              '@id': articleUrl,
+            },
           }),
         }}
       />
