@@ -29,13 +29,10 @@ export default function MainPage() {
     fetchAll();
   }, []);
 
-  // Restore admin token from localStorage
+  // Restore admin token from localStorage (in case store initialization was SSR)
   useEffect(() => {
-    useAppStore.getState().restoreAdminToken();
-    const { adminToken: restored, currentView: view } = useAppStore.getState();
-    if (restored && view === 'admin-login') {
-      navigate('admin');
-    }
+    const { restoreAdminToken } = useAppStore.getState();
+    restoreAdminToken();
   }, []);
 
   // Check if there's a pending SPA view to navigate to (from cross-page navigation)
@@ -77,8 +74,6 @@ export default function MainPage() {
         return <AboutPage />;
       case 'code':
         return <CodePage />;
-      case 'admin-login':
-        return <AdminLogin />;
       case 'admin':
         return adminToken ? <AdminPanel /> : <AdminLogin />;
       default:

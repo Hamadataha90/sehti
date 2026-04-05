@@ -7,8 +7,24 @@ export type ViewType =
   | 'about'
   | 'privacy'
   | 'code'
-  | 'admin-login'
   | 'admin';
+
+// Initialize admin token from localStorage synchronously (no flash of login screen)
+function getInitialAdminToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const token = localStorage.getItem('adminToken');
+    const expiry = localStorage.getItem('adminTokenExpiry');
+    if (token && expiry && Date.now() < Number(expiry)) {
+      return token;
+    }
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminTokenExpiry');
+  } catch {
+    // localStorage not available
+  }
+  return null;
+}
 
 interface ArticleData {
   id: string;
@@ -41,7 +57,7 @@ export const useAppStore = create<AppState>((set) => ({
   currentView: 'home',
   selectedArticleId: null,
   selectedArticle: null,
-  adminToken: null,
+  adminToken: getInitialAdminToken(),
   searchQuery: '',
   selectedCategory: 'all',
 
@@ -49,7 +65,7 @@ export const useAppStore = create<AppState>((set) => ({
     if (typeof window === 'undefined') return;
 
     // Views that are SPA-only (rendered in page.tsx via currentView)
-    const spaViews: ViewType[] = ['home', 'calculators', 'about', 'code', 'admin-login', 'admin'];
+    const spaViews: ViewType[] = ['home', 'calculators', 'about', 'code', 'admin'];
 
     if (spaViews.includes(view)) {
       // If already on the main page, just switch view via Zustand + pushState
@@ -59,7 +75,6 @@ export const useAppStore = create<AppState>((set) => ({
           calculators: '/#calculators',
           about: '/#about',
           code: '/#code',
-          'admin-login': '/#admin-login',
           admin: '/#admin',
         };
         window.history.pushState({}, '', routes[view] ?? '/');
@@ -112,15 +127,8 @@ export const useAppStore = create<AppState>((set) => ({
   },
 
   restoreAdminToken: () => {
-    if (typeof window === 'undefined') return;
-    const token = localStorage.getItem('adminToken');
-    const expiry = localStorage.getItem('adminTokenExpiry');
-    if (token && expiry && Date.now() < Number(expiry)) {
-      set({ adminToken: token });
-    } else {
-      localStorage.removeItem('adminToken');
-      localStorage.removeItem('adminTokenExpiry');
-    }
+    const token = getInitialAdminToken();
+    set({ adminToken: token });
   },
 
   goHome: () => {

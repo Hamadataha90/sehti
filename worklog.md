@@ -162,3 +162,26 @@ Stage Summary:
 - SPA internal navigation (home ↔ calculators ↔ about) remains smooth with pushState
 - Article opening uses full navigation for proper Next.js routing
 - 0 lint errors, pushed to origin/main
+
+---
+Task ID: 6
+Agent: Main Agent
+Task: Implement persistent admin login (stay logged in when navigating away and back)
+
+Work Log:
+- Diagnosed the root cause: Admin button always navigated to 'admin-login' view regardless of token state, and Zustand store reset adminToken to null on every page load
+- Created `getInitialAdminToken()` function in useAppStore.ts that synchronously reads token from localStorage on store creation (eliminates flash of login screen)
+- Changed Zustand store: `adminToken` now initializes via `getInitialAdminToken()` instead of hardcoded `null`
+- Removed `'admin-login'` from ViewType - no longer needed as a separate view
+- Updated Header.tsx: Admin button (desktop + mobile) now navigates to `'admin'` instead of `'admin-login'`
+- Updated page.tsx: Removed `admin-login` case from switch; `'admin'` view now checks token: shows AdminPanel if token exists, AdminLogin if not
+- Simplified restoreAdminToken effect in page.tsx (SSR fallback only)
+- Token persists in localStorage with 7-day expiry, auto-cleaned on expiry
+- 0 lint errors, all changes verified
+
+Stage Summary:
+- Admin login now persists for 7 days via localStorage
+- User stays logged in when navigating to articles/other pages and returning to admin
+- No flash of login screen - token is restored synchronously on store init
+- Single admin view handles both states (logged in → panel, logged out → login form)
+- 0 lint errors
