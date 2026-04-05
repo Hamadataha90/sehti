@@ -83,3 +83,30 @@ All 7 SEO tasks completed successfully with 0 lint errors:
 
 All changes passed ESLint with 0 errors. No existing functionality was broken.
 
+
+---
+Task ID: 1
+Agent: Main Agent
+Task: Fix navigation (URL changes but view stays on article) and fix Monetag ads not showing
+
+Work Log:
+- Analyzed Header.tsx and found root cause: logo used `<Link href="/">` which only changes Next.js URL but doesn't update Zustand store's `currentView`
+- Changed logo from `<Link href="/">` to `<button onClick={goHome}>` in Header.tsx
+- Removed `href: '/'` from "الرئيسية" nav item so `handleNav` properly calls `goHome()`
+- Changed privacy/admin links in mobile menu from `<Link>` to `<button>` to use SPA navigation
+- Updated Zustand store (useAppStore.ts): added `window.scrollTo` to `openArticle`, `goHome`, and `navigate`
+- Added `popstate` event listener for browser back/forward button support
+- Added `syncUrlToState` method for URL-to-state synchronization
+- Created centralized `/src/lib/monetag.ts` utility to avoid code duplication
+- Updated ArticleComponents.tsx to import `triggerMonetag` from centralized utility (removed duplicate function)
+- Updated CalculatorsPage.tsx to import `triggerMonetag` from centralized utility (removed duplicate function)
+- Fixed Prisma schema provider from `postgresql` to `sqlite` for local development
+- Regenerated Prisma client after schema change
+- All lint checks pass, server compiles and runs correctly
+
+Stage Summary:
+- Navigation fix: Logo, "الرئيسية" button, breadcrumb "الرئيسية", and mobile menu all properly update Zustand state now
+- Scroll to top: `openArticle`, `goHome`, and `navigate` all scroll to top
+- Browser back/forward: Added `popstate` listener that fetches articles and syncs state
+- Monetag: Centralized in `/src/lib/monetag.ts`, used by both ArticleComponents and CalculatorsPage
+- Note: Monetag ads require `NEXT_PUBLIC_MONETAG_SRC` and `NEXT_PUBLIC_MONETAG_ZONE` env vars to be configured in .env and on Vercel

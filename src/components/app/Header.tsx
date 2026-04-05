@@ -25,19 +25,19 @@ export function Header() {
   const isArticlePage = pathname.startsWith('/article/');
 
   const navItems = [
-    { id: 'home', label: 'الرئيسية', icon: '🏠', href: '/', active: isHome },
-    { id: 'articles', label: 'المقالات', icon: '📚', href: '/articles', active: isArticles || isArticlePage },
-    { id: 'calculators', label: 'الحاسبات', icon: '🧮', href: null, active: isCalculators },
-    { id: 'about', label: 'من نحن', icon: '💡', href: null, active: isAbout },
+    { id: 'home', label: 'الرئيسية', icon: '🏠', href: null as string | null, active: isHome },
+    { id: 'articles', label: 'المقالات', icon: '📚', href: '/articles' as string | null, active: isArticles || isArticlePage },
+    { id: 'calculators', label: 'الحاسبات', icon: '🧮', href: null as string | null, active: isCalculators },
+    { id: 'about', label: 'من نحن', icon: '💡', href: null as string | null, active: isAbout },
   ];
 
   const handleNav = (item: typeof navItems[number]) => {
     setMobileOpen(false);
     setSearchOpen(false);
-    if (item.href) return; // Link handles navigation
+    if (item.href) return; // Link handles navigation (only for /articles real page)
+    if (item.id === 'home') goHome();
     if (item.id === 'calculators') navigate('calculators');
     if (item.id === 'about') navigate('about');
-    if (item.id === 'home') goHome();
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -52,12 +52,12 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
+        <button onClick={goHome} className="flex items-center gap-2.5 group transition-opacity hover:opacity-80">
           <div className="transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
             <Image src="/logo.png" alt="صِحتي" width={36} height={36} className="rounded-lg" />
           </div>
           <span className="text-xl font-bold text-foreground transition-colors duration-200 group-hover:text-emerald-600">صِحتي</span>
-        </Link>
+        </button>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1">
@@ -74,7 +74,7 @@ export function Header() {
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >
-                <span className="ml-1.5 transition-transform duration-200 group-hover:scale-110">{item.icon}</span>
+                <span className="ml-1.5">{item.icon}</span>
                 {item.label}
               </NavComponent>
             );
@@ -144,12 +144,12 @@ export function Header() {
                   );
                 })}
                 <div className="my-3 border-t border-border/50" />
-                <Link href="/privacy" onClick={() => setMobileOpen(false)} className="btn-press flex items-center justify-start h-11 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted text-sm font-medium w-full">
+                <button onClick={() => { navigate('privacy'); setMobileOpen(false); }} className="btn-press flex items-center justify-start h-11 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted text-sm font-medium w-full">
                   <span className="ml-2.5 text-base">📜</span>سياسة الخصوصية
-                </Link>
-                <Button variant="ghost" className="btn-press justify-start h-11 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted" onClick={() => { navigate('admin-login'); setMobileOpen(false); }}>
+                </button>
+                <button onClick={() => { navigate('admin-login'); setMobileOpen(false); }} className="btn-press flex items-center justify-start h-11 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted text-sm font-medium w-full">
                   <span className="ml-2.5 text-base">⚙️</span>لوحة التحكم
-                </Button>
+                </button>
               </nav>
             </SheetContent>
           </Sheet>

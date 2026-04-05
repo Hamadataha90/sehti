@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { useAppStore } from '@/store/useAppStore';
+import { triggerMonetag } from '@/lib/monetag';
 
 interface Article {
   id: string;
@@ -211,12 +212,4 @@ export function ArticlePage({ article, allArticles, onGoHome, onGoCalculators }:
   );
 }
 
-function triggerMonetag() {
-  if (typeof window === 'undefined') return;
-  const s = process.env.NEXT_PUBLIC_MONETAG_SRC;
-  const z = process.env.NEXT_PUBLIC_MONETAG_ZONE;
-  if (!s || !z) return;
-  if (sessionStorage.getItem('monetag_loaded')) return;
-  sessionStorage.setItem('monetag_loaded', 'true');
-  try { const script = document.createElement('script'); script.src = s; script.async = true; script.setAttribute('data-zone', z); document.body.appendChild(script); } catch (err) { console.warn('Monetag failed:', err); }
-}
+
