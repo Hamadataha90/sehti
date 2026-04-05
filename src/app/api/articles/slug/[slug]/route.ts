@@ -7,8 +7,8 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const article = await db.article.findUnique({
-      where: { slug },
+    const article = await db.article.findFirst({
+      where: { slug: decodeURIComponent(slug) },
     });
 
     if (!article) {

@@ -10,9 +10,9 @@ interface ArticlePageProps {
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
-  const { slug: rawSlug } = await params;
-  const slug = decodeURIComponent(rawSlug);
-  const article = await db.article.findUnique({ where: { slug } });
+  let { slug: rawSlug } = await params;
+  rawSlug = decodeURIComponent(rawSlug);
+  const article = await db.article.findFirst({ where: { slug: rawSlug } });
 
   if (!article) {
     return { title: 'مقال غير موجود | صِحتي' };
@@ -42,9 +42,9 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 }
 
 export default async function ArticleDetailPage({ params }: ArticlePageProps) {
-  const { slug: rawSlug } = await params;
-  const slug = decodeURIComponent(rawSlug);
-  const article = await db.article.findUnique({ where: { slug } });
+  let { slug: rawSlug } = await params;
+  rawSlug = decodeURIComponent(rawSlug);
+  const article = await db.article.findFirst({ where: { slug: rawSlug } });
 
   if (!article) {
     notFound();

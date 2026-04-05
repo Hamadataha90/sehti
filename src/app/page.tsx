@@ -39,7 +39,7 @@ export default function MainPage() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [currentView]);
+  }, [currentView, selectedArticle?.id]);
 
   const renderView = () => {
     switch (currentView) {
@@ -48,6 +48,7 @@ export default function MainPage() {
       case 'article':
         return selectedArticle ? (
           <ArticlePage
+            key={selectedArticle.id}
             article={selectedArticle}
             allArticles={allArticles ?? []}
             onGoHome={goHome}
