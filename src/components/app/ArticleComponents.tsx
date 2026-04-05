@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
 import { toast } from 'sonner';
+import { useAppStore } from '@/store/useAppStore';
 
 interface Article {
   id: string;
@@ -60,6 +61,7 @@ export function ArticlePage({ article, allArticles, onGoHome, onGoCalculators }:
   onGoHome: () => void;
   onGoCalculators: () => void;
 }) {
+  const { openArticle } = useAppStore();
   const [expanded, setExpanded] = useState(false);
   const showCta = expanded;
 
@@ -192,7 +194,7 @@ export function ArticlePage({ article, allArticles, onGoHome, onGoCalculators }:
                 <h2 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">📚 مقالات ذات صلة</h2>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {related.map((a) => (
-                    <button key={a.id} onClick={() => onGoHome()} className="group btn-press text-right rounded-2xl border border-border/50 p-4 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-900/5 dark:hover:shadow-emerald-900/15 hover:border-emerald-200/80 dark:hover:border-emerald-800/50 hover:-translate-y-1">
+                    <button key={a.id} onClick={() => openArticle(a)} className="group btn-press text-right rounded-2xl border border-border/50 p-4 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-900/5 dark:hover:shadow-emerald-900/15 hover:border-emerald-200/80 dark:hover:border-emerald-800/50 hover:-translate-y-1">
                       <div className="aspect-[16/8] rounded-xl overflow-hidden bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-950/20 mb-3 relative">
                         {a.coverImage && <Image src={a.coverImage} alt={a.title} fill className="object-cover transition-transform duration-500 group-hover:scale-110" sizes="200px" />}
                       </div>
