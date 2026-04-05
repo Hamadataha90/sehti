@@ -157,34 +157,32 @@ export function AdminPanel() {
     goHome();
   };
 
-  const handleSeed = async () => {
-    try {
-      const response = await fetch('/api/seed', { method: 'POST' });
-      const data = await response.json();
-      if (data.success) {
-        toast.success(data.message);
-        fetchArticles();
-      }
-    } catch {
-      toast.error('فشل في تهيئة البيانات');
-    }
-  };
+  const [showStats, setShowStats] = useState(false);
+  const [stats, setStats] = useState<{ total: number; withImage: number; noImage: number; withCalc: number; avgContent: number; shortest: string; longest: string } | null>(null);
 
-  const handleFixImages = async () => {
+  const handleStats = async () => {
+    if (showStats) {
+      setShowStats(false);
+      return;
+    }
     try {
-      toast.loading('جارٍ إصلاح الصور المفقودة...', { id: 'fix-images' });
-      const response = await fetch('/api/articles/fix-images', { method: 'POST' });
-      const data = await response.json();
-      toast.dismiss('fix-images');
-      if (data.success) {
-        toast.success(data.message);
-        fetchArticles();
-      } else {
-        toast.error(data.error || 'فشل في إصلاح الصور');
-      }
+      const a = articles;
+      const withImage = a.filter((x) => x.coverImage).length;
+      const withCalc = a.filter((x) => x.calculatorType).length;
+      const avgContent = Math.round(a.reduce((s, x) => s + x.content.length, 0) / a.length);
+      const sorted = [...a].sort((x, y) => x.content.length - y.content.length);
+      setStats({
+        total: a.length,
+        withImage,
+        noImage: a.length - withImage,
+        withCalc,
+        avgContent,
+        shortest: sorted[0]?.title.substring(0, 40) || '-',
+        longest: sorted[sorted.length - 1]?.title.substring(0, 40) || '-',
+      });
+      setShowStats(true);
     } catch {
-      toast.dismiss('fix-images');
-      toast.error('حدث خطأ أثناء إصلاح الصور');
+      toast.error('فشل في تحميل الإحصائيات');
     }
   };
 
@@ -201,19 +199,12 @@ export function AdminPanel() {
         <div className="flex gap-2 flex-wrap">
           <CreateArticleDialog onCreated={fetchArticles} />
           <Button
-            variant="outline"
+            variant={showStats ? 'default' : 'outline'}
             size="sm"
-            onClick={handleFixImages}
-            className="border-amber-300 text-amber-700 hover:bg-amber-50"
+            onClick={handleStats}
+            className={showStats ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}
           >
-            🖼️ إصلاح الصور المفقودة
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSeed}
-          >
-            🌱 تهيئة بيانات تجريبية
+            📊 إحصائيات
           </Button>
           <Button
             variant="ghost"
@@ -225,6 +216,34 @@ export function AdminPanel() {
           </Button>
         </div>
       </div>
+
+      {showStats && stats && (
+        <Card className="mb-6 border-emerald-200 bg-emerald-50/50">
+          <CardContent className="p-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-emerald-700">{stats.total}</div>
+                <div className="text-xs text-muted-foreground">إجمالي المقالات</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-emerald-700">{stats.withImage}</div>
+                <div className="text-xs text-muted-foreground">لها صورة غلاف</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-emerald-700">{stats.withCalc}</div>
+                <div className="text-xs text-muted-foreground">مرتبطة بحاسبة</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-emerald-700">{stats.avgContent}</div>
+                <div className="text-xs text-muted-foreground">متوسط المحتوى (حرف)</div>
+              </div>
+            </div>
+            {stats.noImage > 0 && (
+              <div className="mt-3 text-center text-sm text-amber-600">⚠️ {stats.noImage} مقال بدون صورة غلاف</div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <Separator className="mb-6" />
 
