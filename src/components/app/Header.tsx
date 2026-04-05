@@ -17,10 +17,10 @@ export function Header() {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
 
+  // Active states based on actual URL + Zustand view
   const isHome = pathname === '/' && currentView === 'home';
   const isCalculators = pathname === '/' && currentView === 'calculators';
   const isAbout = pathname === '/' && currentView === 'about';
-  const isCode = pathname === '/' && currentView === 'code';
   const isArticles = pathname === '/articles';
   const isArticlePage = pathname.startsWith('/article/');
 
@@ -34,10 +34,10 @@ export function Header() {
   const handleNav = (item: typeof navItems[number]) => {
     setMobileOpen(false);
     setSearchOpen(false);
-    if (item.href) return; // Link handles navigation (only for /articles real page)
+    // "المقالات" uses real Link navigation - no need to handle here
+    if (item.href) return;
     if (item.id === 'home') goHome();
-    if (item.id === 'calculators') navigate('calculators');
-    if (item.id === 'about') navigate('about');
+    else navigate(item.id as 'calculators' | 'about');
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -51,7 +51,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        {/* Logo */}
+        {/* Logo - always use goHome for proper cross-page navigation */}
         <button onClick={goHome} className="flex items-center gap-2.5 group transition-opacity hover:opacity-80">
           <div className="transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
             <Image src="/logo.png" alt="صِحتي" width={36} height={36} className="rounded-lg" />
@@ -62,11 +62,27 @@ export function Header() {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => {
-            const NavComponent = item.href ? Link : 'button';
+            if (item.href) {
+              // Real pages (like /articles) use Next.js Link
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={`btn-press inline-flex items-center rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
+                    item.active
+                      ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm shadow-emerald-600/25'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                >
+                  <span className="ml-1.5">{item.icon}</span>
+                  {item.label}
+                </Link>
+              );
+            }
+            // SPA views use button with Zustand navigation
             return (
-              <NavComponent
+              <button
                 key={item.id}
-                href={item.href || undefined}
                 onClick={() => handleNav(item)}
                 className={`btn-press inline-flex items-center rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-200 ${
                   item.active
@@ -76,7 +92,7 @@ export function Header() {
               >
                 <span className="ml-1.5">{item.icon}</span>
                 {item.label}
-              </NavComponent>
+              </button>
             );
           })}
         </nav>
@@ -126,11 +142,26 @@ export function Header() {
               </form>
               <nav className="flex flex-col gap-1.5">
                 {navItems.map((item) => {
-                  const MobileNav = item.href ? Link : 'button';
+                  if (item.href) {
+                    return (
+                      <Link
+                        key={item.id}
+                        href={item.href}
+                        onClick={() => setMobileOpen(false)}
+                        className={`btn-press justify-start h-11 rounded-lg transition-all duration-200 flex items-center text-sm font-medium ${
+                          item.active
+                            ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/25'
+                            : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        }`}
+                      >
+                        <span className="ml-2.5 text-base">{item.icon}</span>
+                        {item.label}
+                      </Link>
+                    );
+                  }
                   return (
-                    <MobileNav
+                    <button
                       key={item.id}
-                      href={item.href || undefined}
                       onClick={() => handleNav(item)}
                       className={`btn-press justify-start h-11 rounded-lg transition-all duration-200 flex items-center text-sm font-medium ${
                         item.active
@@ -140,13 +171,17 @@ export function Header() {
                     >
                       <span className="ml-2.5 text-base">{item.icon}</span>
                       {item.label}
-                    </MobileNav>
+                    </button>
                   );
                 })}
                 <div className="my-3 border-t border-border/50" />
-                <button onClick={() => { navigate('privacy'); setMobileOpen(false); }} className="btn-press flex items-center justify-start h-11 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted text-sm font-medium w-full">
+                <Link
+                  href="/privacy"
+                  onClick={() => setMobileOpen(false)}
+                  className="btn-press flex items-center justify-start h-11 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted text-sm font-medium w-full"
+                >
                   <span className="ml-2.5 text-base">📜</span>سياسة الخصوصية
-                </button>
+                </Link>
                 <button onClick={() => { navigate('admin-login'); setMobileOpen(false); }} className="btn-press flex items-center justify-start h-11 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted text-sm font-medium w-full">
                   <span className="ml-2.5 text-base">⚙️</span>لوحة التحكم
                 </button>

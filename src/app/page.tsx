@@ -7,7 +7,6 @@ import { ArticlePage } from '@/components/app/ArticleComponents';
 import { CalculatorsPage } from '@/components/app/CalculatorsPage';
 import { AdminLogin, AdminPanel } from '@/components/app/AdminPanel';
 import { AboutPage } from '@/components/app/AboutPage';
-import { PrivacyPage } from '@/components/app/PrivacyPage';
 import { CodePage } from '@/components/app/CodePage';
 import { useState } from 'react';
 
@@ -18,6 +17,7 @@ export default function MainPage() {
     coverImage: string; calculatorType: string | null; createdAt: string;
   }>>(null);
 
+  // Fetch all articles on mount
   useEffect(() => {
     async function fetchAll() {
       try {
@@ -29,6 +29,7 @@ export default function MainPage() {
     fetchAll();
   }, []);
 
+  // Restore admin token from sessionStorage
   useEffect(() => {
     const token = sessionStorage.getItem('adminToken');
     if (token && currentView === 'admin-login') {
@@ -37,6 +38,19 @@ export default function MainPage() {
     }
   }, []);
 
+  // Check if there's a pending SPA view to navigate to (from cross-page navigation)
+  useEffect(() => {
+    const targetView = sessionStorage.getItem('spa_target_view');
+    if (targetView) {
+      sessionStorage.removeItem('spa_target_view');
+      useAppStore.getState().navigate(targetView as useAppStore extends { navigate: infer V } ? never : never);
+      // Set the view directly since navigate checks pathname which is already '/'
+      const state = useAppStore.getState();
+      useAppStore.setState({ currentView: targetView as typeof state.currentView });
+    }
+  }, []);
+
+  // Scroll to top on view change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentView, selectedArticle?.id]);
@@ -61,8 +75,6 @@ export default function MainPage() {
         return <CalculatorsPage />;
       case 'about':
         return <AboutPage />;
-      case 'privacy':
-        return <PrivacyPage />;
       case 'code':
         return <CodePage />;
       case 'admin-login':
