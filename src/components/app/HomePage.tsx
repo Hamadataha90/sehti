@@ -106,7 +106,7 @@ export function HomePage() {
           <div className="mt-14 grid grid-cols-3 gap-6 max-w-sm mx-auto animate-[slideUp_0.6s_ease-out_0.3s]">
             {[
               { value: '4', label: 'حاسبات صحية', delay: '0s' },
-              { value: '16+', label: 'مقال متخصص', delay: '0.1s' },
+              { value: '36+', label: 'مقال متخصص', delay: '0.1s' },
               { value: '100%', label: 'مجاني', delay: '0.2s' },
             ].map((stat) => (
               <div key={stat.label} className="text-center group">
