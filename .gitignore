@@ -52,3 +52,27 @@ prompt
 server.log
 # Skills directory
 /skills/
+
+# Database files
+/db/*.db
+/db/*.db-journal
+/prisma/*.db
+/prisma/*.db-journal
+
+# Sandbox-specific files
+.zscripts/
+Caddyfile
+.accesslog
+.config-backup
+.stats
+download/
+
+# Build artifacts and zip files
+*.zip
+/public/dist/
+
+# Seed scripts (keep in project but don't track DB)
+seed-db.ts
+
+# Worklog
+worklog.md
