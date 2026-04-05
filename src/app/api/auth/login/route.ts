@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server';
 import { signToken } from '@/lib/jwt';
 
-// Default admin credentials (in production, use env variables)
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'admin@calchub.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? 'admin123';
-
 export async function POST(request: Request) {
   try {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminEmail || !adminPassword) {
+      console.error('ADMIN_EMAIL and ADMIN_PASSWORD environment variables are not set');
+      return NextResponse.json(
+        { error: 'خدمة تسجيل الدخول غير متوفرة حاليًا' },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     const { email, password } = body;
 
@@ -17,8 +24,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Simple credential check
-    if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+    if (email !== adminEmail || password !== adminPassword) {
       return NextResponse.json(
         { error: 'بيانات الدخول غير صحيحة' },
         { status: 401 }
