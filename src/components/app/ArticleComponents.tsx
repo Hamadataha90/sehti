@@ -81,7 +81,7 @@ export function ArticlePage({ article, allArticles, onGoHome, onGoCalculators }:
 
   // Share functions
   const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
-  const articleUrl = `${siteUrl}/articles/${article.slug}`;
+  const articleUrl = `${siteUrl}/article/${article.slug}`;
   const shareText = `${article.title} — صِحتي`;
 
   const shareWhatsApp = () => { window.open(`https://wa.me/?text=${encodeURIComponent(shareText + '\n' + articleUrl)}`, '_blank'); };

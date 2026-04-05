@@ -289,7 +289,7 @@ function ArticleRow({ article, onDeleted, onUpdated }: {
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-foreground truncate">{article.title}</h3>
           <p className="text-sm text-muted-foreground mt-1 truncate">
-            /articles/{article.slug}
+            /article/{article.slug}
           </p>
           <div className="flex items-center gap-2 mt-2">
             <Badge variant="secondary" className="text-xs">
