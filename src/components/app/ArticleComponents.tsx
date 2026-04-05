@@ -81,14 +81,16 @@ export function ArticlePage({ article, allArticles, onGoHome, onGoCalculators }:
 
   // Share functions
   const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
-  const articleUrl = `${siteUrl}/article/${article.slug}`;
+  // Encode slug for social media (Twitter doesn't recognize Arabic in URLs as part of the link)
+  const articleUrl = `${siteUrl}/article/${encodeURIComponent(article.slug)}`;
+  const articleUrlRaw = `${siteUrl}/article/${article.slug}`;
   const shareText = `${article.title} — صِحتي`;
 
   const shareWhatsApp = () => { window.open(`https://wa.me/?text=${encodeURIComponent(shareText + '\n' + articleUrl)}`, '_blank'); };
   const shareTwitter = () => { window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(articleUrl)}`, '_blank'); };
   const shareFacebook = () => { window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`, '_blank'); };
   const copyLink = () => {
-    navigator.clipboard.writeText(articleUrl);
+    navigator.clipboard.writeText(articleUrlRaw);
     toast.success('تم نسخ الرابط ✅');
   };
 
