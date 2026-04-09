@@ -5,6 +5,7 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import { toast } from 'sonner';
 import { useState, useMemo } from 'react';
+import { triggerMonetag } from '@/lib/monetag';
 
 interface Article {
   id: string;
@@ -45,7 +46,10 @@ export function ArticleDetailView({
     };
   }, [article.content]);
 
-  const handleReadMore = () => setExpanded(true);
+  const handleReadMore = () => {
+    setExpanded(true);
+    triggerMonetag();
+  };
 
   const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const articleUrl = `${siteUrl}/article/${article.slug}`;

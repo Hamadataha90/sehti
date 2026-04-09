@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
-import { useTheme } from 'next-themes';
+import { useTheme } from '@/components/theme/AppThemeProvider';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -129,8 +129,11 @@ export function Header() {
             size="icon"
             onClick={() => setTheme(currentTheme === 'dark' ? 'light' : 'dark')}
             className="text-muted-foreground hover:text-foreground hover:bg-muted btn-press rounded-lg"
+            aria-label="تبديل المظهر"
           >
-            {currentTheme === 'dark' ? (
+            {!mounted ? (
+              <span className="block h-[18px] w-[18px]" aria-hidden />
+            ) : currentTheme === 'dark' ? (
               <svg className="h-[18px] w-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>

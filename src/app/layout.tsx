@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from 'next';
+import type { ThemeProviderProps } from 'next-themes';
 import { Cairo } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider } from '@/components/theme/AppThemeProvider';
 import { AppShell } from './AppShell';
 import { generateWebsiteSchema, generateOrganizationSchema } from '@/lib/seo';
+import { buildThemeHeadScript } from '@/lib/theme-head-inline';
 
 const cairo = Cairo({
   subsets: ['arabic', 'latin'],
@@ -116,6 +118,18 @@ export default function RootLayout({
   const websiteSchema = generateWebsiteSchema();
   const organizationSchema = generateOrganizationSchema();
 
+  const themeBootstrap: Pick<
+    ThemeProviderProps,
+    'attribute' | 'storageKey' | 'defaultTheme' | 'themes' | 'enableSystem' | 'enableColorScheme'
+  > = {
+    attribute: 'class',
+    storageKey: 'theme',
+    defaultTheme: 'light',
+    themes: ['light', 'dark'],
+    enableSystem: true,
+    enableColorScheme: true,
+  };
+
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
@@ -142,9 +156,15 @@ export default function RootLayout({
           }}
           suppressHydrationWarning
         />
+        <script
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: buildThemeHeadScript(themeBootstrap),
+          }}
+        />
       </head>
       <body className={`${cairo.variable} font-sans antialiased bg-background text-foreground`}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange suppressHydrationWarning>
+        <ThemeProvider {...themeBootstrap} disableTransitionOnChange>
           <AppShell>{children}</AppShell>
           <Toaster position="top-center" />
         </ThemeProvider>

@@ -59,7 +59,6 @@ const nextConfig: NextConfig = {
           
           // SEO/Performance
           { key: 'Access-Control-Allow-Credentials', value: 'true' },
-          { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' www.googletagmanager.com www.google-analytics.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' www.google-analytics.com;" },
         ],
       },
 

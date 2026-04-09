@@ -14,13 +14,15 @@ export function triggerMonetag(): void {
   const zone = process.env.NEXT_PUBLIC_MONETAG_ZONE;
 
   if (!src || !zone) {
-    // Env vars not configured - skip silently
-    console.debug('[Monetag] Env vars not configured, skipping ad load');
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(
+        '[Monetag] Missing NEXT_PUBLIC_MONETAG_SRC or NEXT_PUBLIC_MONETAG_ZONE — ads will not load. Check .env',
+      );
+    }
     return;
   }
 
   monetagLoaded = true;
-  console.debug('[Monetag] Loading ad script...');
 
   try {
     const script = document.createElement('script');
