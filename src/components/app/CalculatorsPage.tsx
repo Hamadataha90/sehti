@@ -126,8 +126,8 @@ function CalorieCalculator() {
     if (h < 100 || h > 250) { toast.error('يرجى إدخال طول صالح'); return; }
     const bmr = gender === 'male' ? 10 * w + 6.25 * h - 5 * a + 5 : 10 * w + 6.25 * h - 5 * a - 161;
     const tdee = Math.round(bmr * af);
-    setResult({ tdee, lose: Math.round(tdee * 0.8), maintain: tdee, gain: Math.round(tdee * 1.2) });
     triggerMonetag();
+    setResult({ tdee, lose: Math.round(tdee * 0.8), maintain: tdee, gain: Math.round(tdee * 1.2) });
   };
 
   return (
@@ -187,8 +187,8 @@ function BMICalculator() {
     else if (bmi < 25) { cat = 'وزن طبيعي'; col = 'text-emerald-600 dark:text-emerald-400'; }
     else if (bmi < 30) { cat = 'زيادة في الوزن'; col = 'text-amber-600 dark:text-amber-400'; }
     else { cat = 'سمنة'; col = 'text-red-600 dark:text-red-400'; }
-    setResult({ bmi: bmiR, category: cat, color: col });
     triggerMonetag();
+    setResult({ bmi: bmiR, category: cat, color: col });
   };
 
   const barW = (bmi: number) => bmi < 10 ? 5 : bmi > 45 ? 95 : ((bmi - 10) / 35) * 90 + 5;
@@ -249,8 +249,8 @@ function WaterCalculator() {
     else if (activity === 'active') base += 1;
     else if (activity === 'intense') base += 1.5;
     const liters = Math.round(base * 10) / 10;
-    setResult({ liters, cups: Math.ceil(liters * 4.2) });
     triggerMonetag();
+    setResult({ liters, cups: Math.ceil(liters * 4.2) });
   };
 
   return (
@@ -313,8 +313,8 @@ function IdealWeightCalculator() {
     const ideal = Math.round(base);
     const min = Math.round(base * 0.9);
     const max = Math.round(base * 1.1);
-    setResult({ min, max, ideal });
     triggerMonetag();
+    setResult({ min, max, ideal });
   };
 
   return (
@@ -379,6 +379,7 @@ function DailyTracker() {
     if (!cal) { toast.error('أدخل السعرات'); return; }
     const today = new Date().toISOString().split('T')[0];
     const updated = [...entries.filter((e) => e.date !== today), { date: today, calories: cal, goal: goal || cal }];
+    triggerMonetag();
     saveEntries(updated);
     if (todayGoal) localStorage.setItem('calorie_goal', todayGoal);
     setTodayCal('');
@@ -461,4 +462,4 @@ function DailyTracker() {
   );
 }
 
-// ===== Monetag is handled via @/lib/monetag.ts =====
+// ===== Monetag: triggerMonetag() after each calculator result / tracker log — @/lib/monetag.ts =====

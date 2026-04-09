@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import { HomePage } from '@/components/app/HomePage';
 import { ArticlePage } from '@/components/app/ArticleComponents';
@@ -11,6 +12,7 @@ import { CodePage } from '@/components/app/CodePage';
 import { useState } from 'react';
 
 export default function MainPage() {
+  const pathname = usePathname();
   const { currentView, selectedArticle, navigate, goHome, adminToken } = useAppStore();
   const [allArticles, setAllArticles] = useState<null | Array<{
     id: string; title: string; slug: string; content: string; excerpt: string | null;
@@ -34,6 +36,23 @@ export default function MainPage() {
     const { restoreAdminToken } = useAppStore.getState();
     restoreAdminToken();
   }, []);
+
+  // Sync SPA view from URL (?view= / #) — refresh and Links from /article/... must show calculators, etc.
+  useEffect(() => {
+    if (pathname !== '/') return;
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('view');
+    const hash = window.location.hash;
+    if (q === 'calculators' || hash === '#calculators') {
+      useAppStore.setState({ currentView: 'calculators' });
+    } else if (q === 'about' || hash === '#about') {
+      useAppStore.setState({ currentView: 'about' });
+    } else if (q === 'code' || hash === '#code') {
+      useAppStore.setState({ currentView: 'code' });
+    } else if (q === 'admin' || hash === '#admin') {
+      useAppStore.setState({ currentView: 'admin' });
+    }
+  }, [pathname]);
 
   // Check if there's a pending SPA view to navigate to (from cross-page navigation)
   useEffect(() => {
